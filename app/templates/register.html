@@ -1,0 +1,35 @@
+<form id="register-form"> 
+    <label for="username">Username:</label>
+    <input id="username" type="text"> 
+    <label for="email">Email:</label>
+    <input id="email" type="email">
+    <input id="password" type="password">
+
+    <button type="submit">Register</button>
+</form>
+
+<script>
+const form = document.getElementById("register-form");
+
+form.addEventListener("submit", async (event) => {
+    event.preventDefault(); // removes the default behavior of the form submission, which is to reload the page
+
+    const data = {
+        username: document.getElementById("username").value,
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value
+    };
+
+    const response = await fetch("/register", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+
+    console.log(result);
+});
+</script>
