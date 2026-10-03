@@ -1,12 +1,16 @@
-<form id="register-form"> 
-    <label for="username">Username:</label>
-    <input id="username" type="text"> 
-    <label for="email">Email:</label>
-    <input id="email" type="email">
-    <input id="password" type="password">
+{% block content %}
+    <h2>Register</h2>
+    <form id="register-form"> 
+        <label for="username">Username:</label>
+        <input id="username" type="text"> 
+        <label for="email">Email:</label>
+        <input id="email" type="email">
+        <label for="password">Password:</label>
+        <input id="password" type="password">
 
-    <button type="submit">Register</button>
-</form>
+        <button type="submit">Register</button>
+    </form>
+{% endblock %}
 
 <script>
 const form = document.getElementById("register-form");
