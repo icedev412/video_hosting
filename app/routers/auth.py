@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from fastapi.templating import Jinja2Templates
 from app.core.database import get_db
 from app.models.user import User, UserSession, hash_token
-from app.schemas.auth import UserLogin, UserRegister, UserResponse
+from app.schemas.auth import UserChangePassword, UserDeleteAccount, UserLogin, UserRegister, UserResponse
 from fastapi import status
 from sqlalchemy.exc import IntegrityError
 import secrets
@@ -21,7 +21,6 @@ from app.core.security import verify_password, hash_password
 templates = Jinja2Templates(directory="app/templates")
 
 router = APIRouter(
-    prefix="/auth",
     tags=["Authentication"],
 )
 
@@ -133,6 +132,5 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
         raise HTTPException(401, "Session expired or invalid")
     return sess.user
 
-@router.get("/account")
-def me(user: User = Depends(get_current_user)):
-    return user
+
+

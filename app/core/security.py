@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 import jwt
 from pwdlib import PasswordHash
 
-
+SECRET_KEY = "ojwrfogrjrgfkjsgljksgfjiasdfsljkadsfjkladsfljaskjhwgrohuwrwyup24r915150132475kfhjkadufihuqrug"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_MINUTES = 30
 

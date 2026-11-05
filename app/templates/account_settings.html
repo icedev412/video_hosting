@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/static/favicon.ico">
+    <title>Settings</title>
+</head>
+<body>
+    <h1>Settings</h1>
+
+    {% if user %}
+    <section>
+        <h2>Account</h2>
+        <p>Username: {{ user.username }}</p>
+        <p>Email: {{ user.email }}</p>
+    </section>
+
+    <section>
+        <h2>Change Password</h2>
+        <form id="change-password-form">
+            <div>
+                <label for="old-password">Old Password:</label>
+                <input id="old-password" name="old_password" type="password"
+                       autocomplete="current-password" required>
+            </div>
+            <div>
+                <label for="new-password">New Password:</label>
+                <input id="new-password" name="new_password" type="password"
+                       autocomplete="new-password" minlength="8" required>
+            </div>
+            <button type="submit">Change Password</button>
+            <p id="change-password-message" role="status"></p>
+        </form>
+    </section>
+
+    <section>
+        <h2>Delete Account</h2>
+        <form id="delete-account-form">
+            <div>
+                <label for="password">Password:</label>
+                <input id="password" name="password" type="password"
+                       autocomplete="current-password" required>
+            </div>
+            <button type="submit">Delete Account</button>
+            <p id="delete-account-message" role="status"></p>
+        </form>
+    </section>
+    {% else %}
+        <p>No user is logged in. <a href="/login">Log in</a></p>
+    {% endif %}
+
+    <script>
+    async function postJson(url, data) {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+
+        let result = null;
+        try {
+            result = await response.json();
+        } catch {
+            // response wasn't JSON; ignore
+        }
+        return { ok: response.ok, result };
+    }
+
+    function errorText(result) {
+        // FastAPI sends errors as {"detail": "..."}
+        return (result && result.detail) || "Something went wrong.";
+    }
+
+    const changeForm = document.getElementById("change-password-form");
+    if (changeForm) {
+        const msg = document.getElementById("change-password-message");
+
+        changeForm.addEventListener("submit", async (event) => {
+            event.preventDefault(); // stop the page reload
+
+            const { ok, result } = await postJson("/account/change-password", {
+                old_password: document.getElementById("old-password").value,
+                new_password: document.getElementById("new-password").value,
+            });
+
+            if (ok) {
+                msg.textContent = "Password changed.";
+                changeForm.reset();
+            } else {
+                msg.textContent = errorText(result);
+            }
+        });
+    }
+
+    const deleteForm = document.getElementById("delete-account-form");
+    if (deleteForm) {
+        const msg = document.getElementById("delete-account-message");
+
+        deleteForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            if (!confirm("This will permanently delete your account. Continue?")) {
+                return;
+            }
+
+            const { ok, result } = await postJson("/account/delete-account", {
+                password: document.getElementById("password").value,
+            });
+
+            if (ok) {
+                window.location.href = "/";
+            } else {
+                msg.textContent = errorText(result);
+            }
+        });
+    }
+    </script>
+</body>
+</html>
